@@ -218,13 +218,14 @@ impl TravelingSalesman {
             self.mutate_population();
 
             if i == 10 || (i >= 10 && found_iter == i && prints_done < 4) {
-                println!(
+                /*println!(
                     "Best score is {} for {:?} on iteration {}",
                     best_score.unwrap(),
                     best,
                     found_iter
-                );
+                );*/
 
+                println!("{}", best_score.unwrap());
                 prints_done += 1;
             }
 
@@ -232,12 +233,13 @@ impl TravelingSalesman {
         }
 
         if prints_done == 4 {
-            println!(
+            println!("{}", best_score.unwrap());
+            /*println!(
                 "Best score is {} for {:?}, found on iteration {}",
                 best_score.unwrap(),
                 best,
                 found_iter
-            );
+            );*/
         }
 
         best
