@@ -22,6 +22,7 @@ impl Point {
 struct TravelingSalesman {
     n: u32,
     population: Vec<Vec<u32>>,
+    population_size: usize,
     towns: Vec<Point>,
 }
 
@@ -30,13 +31,27 @@ impl TravelingSalesman {
     const POPULATION_KEPT_AMOUNT: usize = TravelingSalesman::POPULATION_SIZE / 2;
     const ITERATIONS_AFTER_BEST: u32 = 50;
 
+    fn population_can_be_generated(n: u32) -> usize {
+        let mut variants_count = 1;
+
+        for i in 2..n {
+            variants_count *= i;
+
+            if variants_count >= TravelingSalesman::POPULATION_SIZE as u32 {
+                return TravelingSalesman::POPULATION_SIZE;
+            }
+        }
+
+        variants_count as usize
+    }
+
     fn new(n: u32) -> Self {
         let towns = TravelingSalesman::generate_towns(n);
-        let population =
-            TravelingSalesman::generate_popultaion(TravelingSalesman::POPULATION_SIZE, &towns);
+        let population = TravelingSalesman::generate_popultaion(&towns);
 
         TravelingSalesman {
             n,
+            population_size: population.len(),
             population,
             towns,
         }
@@ -57,12 +72,14 @@ impl TravelingSalesman {
         towns
     }
 
-    fn generate_popultaion(k: usize, towns: &Vec<Point>) -> Vec<Vec<u32>> {
+    fn generate_popultaion(towns: &Vec<Point>) -> Vec<Vec<u32>> {
+        let population_size = TravelingSalesman::population_can_be_generated(towns.len() as u32);
+
         let mut population = vec![];
-        population.reserve(k);
+        population.reserve(population_size as usize);
         let mut rng = rand::thread_rng();
 
-        while population.len() < k {
+        while population.len() < population_size as usize {
             let mut member: Vec<u32> = (0..towns.len()).map(|x| x as u32).collect();
             member.shuffle(&mut rng);
 
@@ -96,7 +113,7 @@ impl TravelingSalesman {
 
         let mut i = 0;
 
-        while self.population.len() < TravelingSalesman::POPULATION_SIZE as usize {
+        while self.population.len() < self.population_size {
             let child = TravelingSalesman::crossover(&parents[i], &parents[i + 1]);
 
             if !self.population.contains(&child) {
