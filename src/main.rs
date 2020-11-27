@@ -28,8 +28,8 @@ struct TravelingSalesman {
 
 impl TravelingSalesman {
     const POPULATION_SIZE: usize = 100;
-    const POPULATION_KEPT_AMOUNT: usize = TravelingSalesman::POPULATION_SIZE / 2;
-    const ITERATIONS_AFTER_BEST: u32 = 50;
+    const POPULATION_KEPT_AMOUNT: usize = TravelingSalesman::POPULATION_SIZE / 5;
+    const ITERATIONS_AFTER_BEST: u32 = 100;
 
     fn population_can_be_generated(n: u32) -> usize {
         let mut variants_count = 1;
