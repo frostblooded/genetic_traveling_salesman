@@ -72,7 +72,7 @@ impl TravelingSalesman {
         towns
     }
 
-    fn generate_popultaion(towns: &Vec<Point>) -> Vec<Vec<u32>> {
+    fn generate_popultaion(towns: &[Point]) -> Vec<Vec<u32>> {
         let population_size = TravelingSalesman::population_can_be_generated(towns.len() as u32);
 
         let mut population = vec![];
@@ -91,12 +91,12 @@ impl TravelingSalesman {
         population
     }
 
-    fn get_member_fitness(&self, member: &Vec<u32>) -> f32 {
+    fn get_member_fitness(&self, member: &[u32]) -> f32 {
         let mut res = 0f32;
 
         for i in 0..member.len() - 1 {
             res += self.towns[member[i as usize] as usize]
-                .get_distance_to(&self.towns[member[i + 1 as usize] as usize]);
+                .get_distance_to(&self.towns[member[i + 1usize] as usize]);
         }
 
         res
@@ -129,14 +129,14 @@ impl TravelingSalesman {
         }
     }
 
-    fn crossover(p1: &Vec<u32>, p2: &Vec<u32>) -> Vec<u32> {
+    fn crossover(p1: &[u32], p2: &[u32]) -> Vec<u32> {
         let mut rng = rand::thread_rng();
         let mut child = vec![];
         let idx1 = rng.gen_range(0, p1.len() - 1);
         let idx2 = rng.gen_range(idx1, p1.len());
 
-        for i in idx1..idx2 {
-            child.push(p1[i]);
+        for el in p1.iter().take(idx2).skip(idx1) {
+            child.push(*el);
         }
 
         let mut i = idx2;
@@ -169,12 +169,12 @@ impl TravelingSalesman {
         }
     }
 
-    fn mutate(&self, member: &Vec<u32>) -> Vec<u32> {
+    fn mutate(&self, member: &[u32]) -> Vec<u32> {
         let mut rng = rand::thread_rng();
         let idx1 = rng.gen_range(0, member.len() - 1);
         let idx2 = rng.gen_range(idx1, member.len());
 
-        let mut res = member.clone();
+        let mut res = member.to_owned();
         let length = idx2 - idx1;
 
         for i in 0..length {
@@ -196,7 +196,7 @@ impl TravelingSalesman {
                 .population
                 .iter()
                 .enumerate()
-                .map(|(i, x)| (i, self.get_member_fitness(&x)))
+                .map(|(i, x)| (i, self.get_member_fitness(x)))
                 .collect();
 
             member_scores.sort_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
@@ -246,7 +246,7 @@ impl TravelingSalesman {
     }
 }
 
-fn print_to_svg(ts: &TravelingSalesman, solution: &Vec<u32>) {
+fn print_to_svg(ts: &TravelingSalesman, solution: &[u32]) {
     let mut svg = "<!DOCTYPE html>
 <html>
 <body>
@@ -265,7 +265,7 @@ fn print_to_svg(ts: &TravelingSalesman, solution: &Vec<u32>) {
         svg.push_str(&circle);
     }
 
-    for i in 0..solution.len() - 1 as usize {
+    for i in 0..solution.len() - 1usize {
         let town1 = &ts.towns[solution[i] as usize];
         let town2 = &ts.towns[solution[i + 1] as usize];
         let line =
